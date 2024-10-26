@@ -50,9 +50,14 @@ jobs:
       # 提取Docker镜像元数据（标签、标签）
       - name: Extract Docker metadata
         id: meta
-        uses: docker/metadata-action@96383f45573cb7f253c731d3b3ab81c87ef81934 # v5.0.0
+        uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+            标签: |
+              type=ref,event=tag         # 使用Git标签作为镜像标签
+              type=sha,label=short-sha    # 使用简短的commit SHA
+              type=ref,event=branch,branch=main,tag=latest  # 仅在main分支构建latest标签
+
 
       # 使用Dockerfile构建并推送Docker镜像（非PR时推送）
       - name: Build 和 push Docker image
