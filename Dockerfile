@@ -1,4 +1,4 @@
-FROM golang:1.22.2 AS builder
+FROM golang:1.23.2-alpine3.20 AS builder
 
 ENV GO111MODULE=on
 WORKDIR /go/release
@@ -6,14 +6,19 @@ ADD . .
 RUN set -x \
     && CGO_ENABLED=0 go build -trimpath -ldflags="-s -w -buildid=" -o usdtmore ./main
 
-FROM archlinux:latest
+FROM alpine:3.20
 
 ENV TZ=Asia/Shanghai
 
-COPY --from=builder /go/release/usdtmore /runtime/usdtmore
+# 安装所需的依赖
+RUN apk add --no-cache tzdata ca-certificates
 
+COPY --from=builder /go/release/usdtmore /runtime/usdtmore
 ADD ./templates /runtime/templates
 ADD ./static /runtime/static
+
+# 设置时区
+RUN ln -fs /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
 
 EXPOSE 6080
 CMD ["/runtime/usdtmore"]
