@@ -53,10 +53,10 @@ jobs:
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-            标签: |
-              type=ref,event=tag         # 使用Git标签作为镜像标签
-              type=sha,label=short-sha    # 使用简短的commit SHA
-              type=ref,event=branch,branch=main,tag=latest  # 仅在main分支构建latest标签
+          tags: |
+            type=ref,event=tag         # 使用Git标签作为镜像标签
+            type=sha,label=short-sha    # 使用简短的commit SHA
+            type=ref,event=branch,branch=main,tag=latest  # 仅在main分支构建latest标签
 
 
       # 使用Dockerfile构建并推送Docker镜像（非PR时推送）
